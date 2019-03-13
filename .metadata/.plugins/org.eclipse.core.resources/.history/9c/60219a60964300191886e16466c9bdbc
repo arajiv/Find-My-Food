@@ -1,0 +1,17 @@
+import javax.swing.*;
+public class UI {
+	
+	public static void main(String args[]) { 
+		JFrame frame = new JFrame(); 
+		JTextField tf = new JTextField(""); 
+		tf.setBounds(50, 75, 200, 30);
+		JLabel label1 = new JLabel("Select a Location"); 
+		label1.setBounds(50, 50, 200, 30);
+		frame.add(label1);
+		frame.setTitle("Find My Food"); 
+		frame.add(tf); 
+		frame.setSize(800,600); 
+		frame.setLayout(null); 
+		frame.setVisible(true); 
+	}
+}

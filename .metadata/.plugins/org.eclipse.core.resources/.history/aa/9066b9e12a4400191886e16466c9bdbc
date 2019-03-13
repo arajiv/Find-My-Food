@@ -1,0 +1,41 @@
+import java.awt.Color;
+
+import javax.swing.*;
+public class UI {
+	
+	public static void main(String args[]) { 
+		JFrame frame = new JFrame(); 
+		frame.setTitle("Find My Food"); 
+		frame.setSize(800,600); 
+		
+		JLabel label1 = new JLabel("What is your location?"); 
+		label1.setBounds(50, 50, 200, 30);
+		frame.add(label1);
+		
+		JTextField tf = new JTextField(""); 
+		tf.setBounds(50, 75, 200, 30);
+		frame.add(tf); 
+		
+		JLabel label2 = new JLabel("Select a cusine"); 
+		label2.setBounds(50,125,200,30);
+		frame.add(label2);
+
+		String[] cuisines = {"American", "Mexican", "Any"}; 
+		JComboBox selectCuisine = new JComboBox(cuisines); 
+		selectCuisine.setBounds(50,150,200,30);
+		frame.add(selectCuisine); 
+		
+		JLabel label3 = new JLabel("Select a rating"); 
+		label3.setBounds(50, 200, 200, 30); 
+		frame.add(label3); 
+		
+//		JSlider ratings = new JSlider(JSlider.HORIZONTAL, 0, 5 ,0); 
+//		ratings.setMajorTickSpacing(1); 
+//		ratings.setPaintTicks(true);
+//		ratings.setPaintLabels(true);
+//		frame.add(ratings);
+		
+		frame.setLayout(null); 
+		frame.setVisible(true); 
+	}
+}

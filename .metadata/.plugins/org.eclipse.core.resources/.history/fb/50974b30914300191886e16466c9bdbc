@@ -1,0 +1,17 @@
+import java.awt.BorderLayout;
+
+import javax.swing.*; 
+public class Frame extends JFrame {
+	
+	JFrame frame; 
+	public Frame() { 
+		JTextField tf = new JTextField(); 
+		
+		setTitle("Find My Food"); 
+		add(tf); 
+		setSize(400,500); 
+		setLayout(null); 
+		setVisible(true); 
+	}
+
+}

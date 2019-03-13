@@ -1,0 +1,19 @@
+import java.awt.BorderLayout;
+
+import javax.swing.*; 
+public class Frame extends JFrame {
+	
+	JFrame frame; 
+	public Frame() { 
+		JPanel panel = new JPanel(new BorderLayout()); 
+		String[] locations = {"San Luis Obispo"}; 
+		JComboBox<String> choices = new JComboBox<String>(locations); 
+		panel.add(choices, BorderLayout.CENTER); 
+		getContentPane().add(panel); 
+		setTitle("Find My Food"); 
+		setSize(400,500); 
+		setLayout(null); 
+		setVisible(true); 
+	}
+
+}

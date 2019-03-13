@@ -1,0 +1,148 @@
+package com.findmyfood;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.io.IOException;
+
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
+
+public class MainApp extends Application {
+
+    private Stage primaryStage;
+    private BorderPane rootLayout;
+    static Connection connect; 
+
+    @Override
+    public void start(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+        this.primaryStage.setTitle("FindMyFood");
+
+        initRootLayout();
+
+        showFoodQuery();
+    }
+    
+    /**
+     * Initializes the root layout.
+     */
+    public void initRootLayout() {
+        try {
+            // Load root layout from fxml file.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("view/RootLayout.fxml"));
+            rootLayout = (BorderPane) loader.load();
+            
+            // Show the scene containing the root layout.
+            Scene scene = new Scene(rootLayout);
+            primaryStage.setScene(scene);
+            primaryStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Shows the person overview inside the root layout.
+     */
+    public void showFoodQuery() {
+        try {
+            // Load person overview.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("view/FoodQuery.fxml"));
+            AnchorPane foodQuery = (AnchorPane) loader.load();
+            
+            // Set person overview into the center of root layout.
+            rootLayout.setCenter(foodQuery);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Returns the main stage.
+     * @return
+     */
+    public Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
+    public static void main(String[] args) {
+        try { 
+        	Class.forName("com.mysql.jdbc.Driver"); 
+        	connect = DriverManager.getConnection("jdbc:mysql://ambari-head.csc.calpoly.edu/sqlove", "sqlove", "pw321");
+        } catch(Exception e) { 
+        	e.printStackTrace(); 
+        }
+    	launch(args);
+    }
+    
+    public static List<String> findDistinctCuisines() { 
+    	ArrayList<String> cuisines = new ArrayList<String>(); 
+    	try {
+			Statement statement1 = connect.createStatement();
+			ResultSet rs = statement1.executeQuery("select distinct cuisine from Restaurant;"); 
+			while(rs.next()) { 
+				String cuisine = rs.getString(1); 
+				cuisines.add(cuisine); 
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} 
+    	
+    	return cuisines; 
+    	
+    }
+    
+    public static String submit(String location, String cuisine, Integer rating) {
+    	String result = ""; 
+    	try {
+    		Statement statement = connect.createStatement();
+    		String currentJoined = "select rname, address, cityName from allJoined";
+    		boolean oneExists = false; 
+    		if(location != null) { 
+    			oneExists = true; 
+    			currentJoined += " where cityName = " + "'" + location + "'";  
+    		}
+    		
+    		if(cuisine != null) { 
+    			if(!oneExists) { 
+    				currentJoined += " where "; 
+    			} else { 
+    				oneExists = true; 
+    				currentJoined += " and "; 
+    			}
+    			currentJoined += "cuisine = " + "'" + cuisine + "'";
+    		}
+    		
+    		if(rating != null) { 
+    			if(!oneExists) { 
+    				currentJoined += " where "; 
+    			} else { 
+    				currentJoined += " and "; 
+    			}
+    			currentJoined += "rating >= " + rating; 
+    		}
+    		currentJoined += " group by rname, address, cityName;"; 
+    		ResultSet rs = statement.executeQuery(currentJoined); 
+    		ResultSetMetaData metadata = rs.getMetaData(); 
+    		int columnCount = metadata.getColumnCount(); 
+    		while(rs.next()) { 
+    			for(int i = 1; i <= columnCount; i++) { 
+    				result += rs.getString(i) + "     "; 
+    			}
+    			result += "\n"; 
+    		}
+    	} catch(Exception e) {
+    		e.printStackTrace();
+    	}
+    	
+    	
+    	return result; 
+    }
+}

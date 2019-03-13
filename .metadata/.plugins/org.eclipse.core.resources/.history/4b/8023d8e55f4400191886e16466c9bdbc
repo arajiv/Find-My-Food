@@ -1,0 +1,15 @@
+import javax.swing.*; 
+public class Frame extends JFrame {
+
+	public Frame() { 
+		setTitle("Find My Food"); 
+		setDefaultCloseOperation(EXIT_ON_CLOSE); 
+		setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS)); 
+		FormPanel panel1 = new FormPanel(); 
+		ResultPanel panel2 = new ResultPanel(); 
+		add(panel1); 
+		setSize(800,600); 
+		setVisible(true); 
+	}
+	
+}

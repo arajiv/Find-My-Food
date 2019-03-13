@@ -1,0 +1,258 @@
+package com.findmyfood;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.io.IOException;
+
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
+
+public class MainApp extends Application {
+
+    private Stage primaryStage;
+    private BorderPane rootLayout;
+    static Connection connect; 
+
+    @Override
+    public void start(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+        this.primaryStage.setTitle("FindMyFood");
+
+        initRootLayout();
+
+        showFoodQuery();
+    }
+    
+    /**
+     * Initializes the root layout.
+     */
+    public void initRootLayout() {
+        try {
+            // Load root layout from fxml file.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("view/RootLayout.fxml"));
+            rootLayout = (BorderPane) loader.load();
+            
+            // Show the scene containing the root layout.
+            Scene scene = new Scene(rootLayout);
+            primaryStage.setScene(scene);
+            primaryStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Shows the person overview inside the root layout.
+     */
+    public void showFoodQuery() {
+        try {
+            // Load person overview.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("view/FoodQuery.fxml"));
+            AnchorPane foodQuery = (AnchorPane) loader.load();
+            
+            // Set person overview into the center of root layout.
+            rootLayout.setCenter(foodQuery);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Returns the main stage.
+     * @return
+     */
+    public Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
+    public static void main(String[] args) {
+        try { 
+        	Class.forName("com.mysql.jdbc.Driver"); 
+        	connect = DriverManager.getConnection("jdbc:mysql://ambari-head.csc.calpoly.edu/sqlove", "sqlove", "pw321");
+        } catch(Exception e) { 
+        	e.printStackTrace(); 
+        }
+    	launch(args);
+    }
+    
+    public static List<String> findDistinctCuisines() { 
+    	ArrayList<String> cuisines = new ArrayList<String>(); 
+    	cuisines.add("Any"); 
+    	try {
+			Statement statement1 = connect.createStatement();
+			ResultSet rs = statement1.executeQuery("select distinct cuisine from Restaurant;"); 
+			while(rs.next()) { 
+				String cuisine = rs.getString(1); 
+				cuisines.add(cuisine); 
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} 
+    	
+    	return cuisines; 
+    	
+    }
+    
+    public static List<String> findDistinctRestaurantTypes() { 
+    	ArrayList<String> restaurantTypes = new ArrayList<String>(); 
+    	restaurantTypes.add("Any"); 
+    	try { 
+    		Statement statement = connect.createStatement(); 
+    		ResultSet rs = statement.executeQuery("select distinct type from Restaurant"); 
+    		while(rs.next()) { 
+    			String type = rs.getString(1); 
+    			restaurantTypes.add(type); 
+    		}
+    	} catch(SQLException e) {
+    		e.printStackTrace();
+    	}
+    	return restaurantTypes; 
+    }
+    
+    public static List<String> findDistinctDishTypes() {
+    	ArrayList<String> dishTypes = new ArrayList<String>(); 
+    	dishTypes.add("Any"); 
+    	try {
+    		Statement statement = connect.createStatement(); 
+    		ResultSet rs = statement.executeQuery("select distinct type from Dish"); 
+    		while(rs.next()) {
+    			String type = rs.getString(1); 
+    			dishTypes.add(type); 
+    		}
+    	} catch(SQLException e) {
+    		e.printStackTrace();
+    	}
+    	return dishTypes; 
+    }
+    
+    public static ArrayList<String> submit(String location, String type, String cuisine, double rating, 
+    		String dishType, String sortBy) {
+    	ArrayList<String> results = new ArrayList<String>(); 
+    	try {
+    		Statement statement = connect.createStatement();
+    		String currentJoined = "select rname, address, cityName, rating, priceCategory, hours";
+    		if(!dishType.equals("Any")) {
+    			currentJoined += ", dishName";
+    		}
+    		currentJoined += " from allJoined"; 
+    		boolean oneExists = false; 
+    		if(location != null) { 
+    			oneExists = true; 
+    			currentJoined += " where cityName = " + "'" + location + "'";  
+    		}
+    		
+    		if(!type.equals("Any")) {
+    			if(!oneExists) {
+    				currentJoined += " where "; 
+    				oneExists = true; 
+    			} else {
+    				currentJoined += " and ";
+    			}
+    			currentJoined += "rtype = " + "'" + type + "'"; 
+    		}
+    		
+    		if(!cuisine.equals("Any")) { 
+    			if(!oneExists) { 
+    				currentJoined += " where "; 
+    				oneExists = true; 
+    			} else { 
+    				currentJoined += " and "; 
+    			}
+    			currentJoined += "cuisine = " + "'" + cuisine + "'";
+    		}
+    		
+    		if(rating > 1) { 
+    			if(!oneExists) { 
+    				currentJoined += " where "; 
+    				oneExists = true; 
+    			} else { 
+    				currentJoined += " and "; 
+    			}
+    			currentJoined += "rating >= " + rating; 
+    		}
+    		
+    		if(!dishType.equals("Any")) {
+    			if(!oneExists) {
+    				currentJoined += " where "; 
+    				oneExists = true; 
+    			} else { 
+    				currentJoined += " and "; 
+    			}
+    			currentJoined += "dishType = " + "'" + dishType + "'"; 
+    		}
+    		currentJoined += " group by rname, address, cityName, priceCategory, rating, hours";
+    		if(!dishType.equals("Any")) {
+    			currentJoined += ", dishName"; 
+    		}
+    		
+    		
+    		if(sortBy.equals("Price Category")) {
+    			currentJoined += " order by priceCategory desc"; 
+    		} else if(sortBy.equals("Rating")) {
+    			currentJoined += " order by rating desc"; 
+    		}
+    		currentJoined += ";"; 
+    		
+    		ResultSet rs = statement.executeQuery(currentJoined); 
+    		ResultSetMetaData metadata = rs.getMetaData(); 
+    		int columnCount = metadata.getColumnCount(); 
+    		while(rs.next()) { 
+    			String result = "";  
+    			for(int i = 1; i <= columnCount; i++) { 
+    				if(metadata.getColumnName(i).equals("priceCategory")) {
+    					
+    					for(int j = 1; j <= Integer.parseInt(rs.getString(i)); j++) {
+    						result += "$"; 
+    					}
+    					result+="\n"; 
+    				} else if(metadata.getColumnName(i).equals("rating")) {
+    					for(int j = 0; j < (int)Double.parseDouble(rs.getString(i)); j++) {
+    						result+="*"; 
+    					}
+    					result+="\n"; 
+    				//} else if(metadata.getColumnLabel(i).equals("rName")){ 
+    					//result += capitalizeWord(rs.getString(i)); 
+    				} else {
+    					result += metadata.getColumnLabel(i) + ": " + rs.getString(i) + "\n"; 
+    				}
+    			}
+    			results.add(result); 
+    		}
+    	} catch(Exception e) {
+    		e.printStackTrace();
+    	}
+    	
+    	
+    	return results; 
+    }
+    
+    static String capitalizeWord(String str) { 
+        StringBuffer s = new StringBuffer(); 
+  
+        // Declare a character of space 
+        // To identify that the next character is the starting 
+        // of a new word 
+        char ch = ' '; 
+        for (int i = 0; i < str.length(); i++) { 
+              
+            // If previous character is space and current 
+            // character is not space then it shows that 
+            // current letter is the starting of the word 
+            if (ch == ' ' && str.charAt(i) != ' ') 
+                s.append(Character.toUpperCase(str.charAt(i))); 
+            else
+                s.append(str.charAt(i)); 
+            ch = str.charAt(i); 
+        } 
+  
+        // Return the string with trimming 
+        return s.toString().trim(); 
+    } 
+}

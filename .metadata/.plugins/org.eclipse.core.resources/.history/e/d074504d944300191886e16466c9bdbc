@@ -1,0 +1,14 @@
+import javax.swing.*;
+public class UI {
+	
+	public static void main(String args[]) { 
+		JFrame frame = new JFrame(); 
+		JTextField tf = new JTextField(""); 
+		tf.setBounds(50, 100, 200, 30);
+		frame.setTitle("Find My Food"); 
+		frame.add(tf); 
+		frame.setSize(800,600); 
+		frame.setLayout(null); 
+		frame.setVisible(true); 
+	}
+}

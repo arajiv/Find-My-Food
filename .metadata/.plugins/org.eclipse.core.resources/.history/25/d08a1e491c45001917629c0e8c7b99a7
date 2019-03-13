@@ -1,0 +1,87 @@
+package com.findmyfood;
+
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Slider;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+
+public class Controller {
+	
+	@FXML 
+	private TextArea outputArea; 
+	
+	@FXML
+	private TextField locationField; 
+	
+	@FXML
+	private ChoiceBox<String> typeBox; 
+	
+	@FXML
+	private ChoiceBox<String> cuisineBox; 
+	
+	@FXML
+	private Slider rating; 
+	
+	@FXML
+	private ChoiceBox<String> dishBox; 
+	
+	@FXML 
+	private Button submit;
+	
+	
+	
+	public Controller()  {
+		
+	}
+	
+	public void initialize() { 
+		//locationBox.setItems(FXCollections.observableArrayList(MainApp.findDistinctLocations()));
+		typeBox.setItems(FXCollections.observableArrayList(MainApp.findDistinctRestaurantTypes())); 
+		typeBox.setValue("Any");
+		cuisineBox.setItems(FXCollections.observableArrayList(MainApp.findDistinctCuisines())); 
+		cuisineBox.setValue("Any");
+		dishBox.setItems(FXCollections.observableArrayList(MainApp.findDistinctDishTypes()));
+		dishBox.setValue("Any");
+	}
+	
+	public String getLocation() { 
+		return locationField.getText(); 
+	}
+	
+	public String getRestaurantType() {
+		return typeBox.getValue(); 
+	}
+	
+	public String getCuisine() { 
+		return cuisineBox.getValue(); 
+	}
+	
+	public int getRating() { 
+		return (int)rating.getValue(); 
+	}
+	
+	public String getDishType() {
+		return dishBox.getValue(); 
+	}
+	
+	@FXML
+	private void handleSearch(ActionEvent event) {
+		outputArea.clear(); 
+		String result = MainApp.submit(getLocation(), getRestaurantType(), getCuisine(), getRating()
+				,getDishType()); 
+		outputArea.appendText(result);
+		//outputArea.appendText(getLocation());
+	
+	}
+	
+	
+}

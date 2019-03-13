@@ -1,0 +1,16 @@
+import javax.swing.*; 
+public class Frame extends JFrame {
+
+	public Frame() { 
+		setTitle("Find My Food"); 
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS)); 
+		add(new FormPanel()); 
+		add(Box.createHorizontalGlue()); 
+		setLocationRelativeTo(null); 
+		setSize(800,600); 
+		pack(); 
+		setVisible(true); 
+	}
+	
+}
