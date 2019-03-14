@@ -21,7 +21,7 @@
                   <Label layoutX="12.0" layoutY="211.0" prefHeight="17.0" prefWidth="102.0" text="Select a cuisine" />
                   <Label layoutX="18.0" layoutY="291.0" text="Select a rating" />
                   <Slider fx:id="rating" blockIncrement="1.0" layoutX="16.0" layoutY="331.0" majorTickUnit="1.0" max="5.0" minorTickCount="0" prefHeight="38.0" prefWidth="191.0" showTickLabels="true" showTickMarks="true" />
-                  <Button layoutX="176.0" layoutY="544.0" mnemonicParsing="false" onAction="#handleSearch" text="Submit" />
+                  <Button layoutX="176.0" layoutY="544.0" mnemonicParsing="false" onAction="#handleSearch" text="Search" />
                   <ChoiceBox fx:id="cuisineBox" layoutX="16.0" layoutY="246.0" prefHeight="27.0" prefWidth="191.0" />
                   <TextField fx:id="locationField" layoutX="14.0" layoutY="75.0" prefHeight="27.0" prefWidth="191.0" />
                   <ChoiceBox fx:id="dishBox" layoutX="16.0" layoutY="431.0" prefHeight="27.0" prefWidth="191.0" />

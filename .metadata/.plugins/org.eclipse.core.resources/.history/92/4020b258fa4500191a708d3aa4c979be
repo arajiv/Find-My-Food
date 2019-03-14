@@ -33,7 +33,7 @@ public class Controller {
 	private ChoiceBox<String> dishBox; 
 	
 	@FXML 
-	private Button search;
+	private Button submit;
 	
 	@FXML
 	private ComboBox<String> sortBox; 
